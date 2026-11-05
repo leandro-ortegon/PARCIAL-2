@@ -6,3 +6,8 @@ Cartago,Pereira,25
 Pereira,Armenia,45
 Manizales,Manizales,0
 Cartago,Pereira,30
+
+# lineas de prueba: errores de formato y una zona aislada
+Armenia,Calarca
+Pereira,Salento,abc
+Bogota,Tunja,140

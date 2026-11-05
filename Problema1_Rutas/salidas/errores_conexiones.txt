@@ -1,0 +1,2 @@
+Línea 11: Armenia,Calarca -> campos faltantes
+Línea 12: Pereira,Salento,abc -> distancia no numerica

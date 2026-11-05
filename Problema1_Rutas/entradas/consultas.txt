@@ -1,2 +1,6 @@
 Armenia,Manizales
 Cartago,Manizales
+# consultas de prueba
+Armenia,Bogota
+Armenia,Cali
+Pereira
