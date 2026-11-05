@@ -25,8 +25,8 @@ defmodule Lector do
   end
 
   # Las líneas vacías y los comentarios no se procesan
-  defp ignorar?(""), do: ___
-  defp ignorar?(linea), do: String.starts_with?(linea, ___)
+  defp ignorar?(""), do: true
+  defp ignorar?(linea), do: String.starts_with?(linea, "#")
 
   # Mete cada línea en la lista que le corresponde
   defp clasificar({numero, linea, {:ok, conexion}}, {validas, errores}) do
@@ -34,6 +34,6 @@ defmodule Lector do
   end
 
   defp clasificar({numero, linea, {:error, motivo}}, {validas, errores}) do
-    {validas, [{numero, linea, ___} | errores]}
+    {validas, [{numero, linea,motivo} | errores]}
   end
 end
