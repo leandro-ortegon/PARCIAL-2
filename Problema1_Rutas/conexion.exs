@@ -1,14 +1,19 @@
 defmodule Conexion do
+  @moduledoc """
+  Representa una conexión entre dos ciudades y su distancia en kilómetros.
+  - Autor: César Leandro Ortegón
+  - Fecha: Noviembre 2026
+  """
 
-  @enforce_keys [:origen,:destino,:distancia]
-  defstruct [:origen,:destino,:distancia]
+  @enforce_keys [:origen, :destino, :distancia]
+  defstruct [:origen, :destino, :distancia]
 
-    def parse(linea) do
+  def parse(linea) do
     campos =
       linea
       |> String.trim()
       |> String.split(",")
-      |>Enum.map( &String.trim/1 )
+      |> Enum.map(&String.trim/1)
 
     case campos do
       [origen, destino, distancia] ->
@@ -28,7 +33,4 @@ defmodule Conexion do
         {:error, "distancia no numerica"}
     end
   end
-
-
-
 end

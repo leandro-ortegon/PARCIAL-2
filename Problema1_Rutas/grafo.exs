@@ -7,25 +7,21 @@ defmodule Grafo do
   - Fecha: Noviembre 2026
   """
 
-  # Recibe [{numero, linea, %Conexion{}}] y devuelve el mapa de vecinos
   def construir(conexiones) do
-    Enum.reduce(conexiones, %{}, fn {_numero, _linea, conexion}, grafo ->     # (1) ¿con qué empieza el grafo?
+    Enum.reduce(conexiones, %{}, fn {_numero, _linea, conexion}, grafo ->
       grafo
       |> agregar_vecino(conexion.origen, conexion.destino, conexion.distancia)
-      |> agregar_vecino(conexion.destino, conexion.origen, conexion.distancia)                         # (2) el sentido contrario
+      |> agregar_vecino(conexion.destino, conexion.origen, conexion.distancia)
     end)
   end
 
-  # Ciudades a las que se puede ir desde `ciudad`
-  def vecinos(grafo, ciudad), do: Map.get(grafo, ciudad, [])                 # (3) si la ciudad no tiene vecinos
+  def vecinos(grafo, ciudad), do: Map.get(grafo, ciudad, [])
 
-  # ¿La ciudad aparece en el grafo?
   def existe?(grafo, ciudad), do: Map.has_key?(grafo, ciudad)
 
-  # Agrega `vecino` a la lista de `ciudad`, al final para conservar el orden
   defp agregar_vecino(grafo, ciudad, vecino, distancia) do
     Map.update(grafo, ciudad, [{vecino, distancia}], fn vecinos ->
-      vecinos ++ [{vecino, distancia}]                                                          # (4) ¿qué se agrega al final?
+      vecinos ++ [{vecino, distancia}]
     end)
   end
 end
