@@ -8,6 +8,7 @@ defmodule Conexion do
       linea
       |> String.trim()
       |> String.split(",")
+      |>Enum.map( &String.trim/1 )
 
     case campos do
       [origen, destino, distancia] ->
