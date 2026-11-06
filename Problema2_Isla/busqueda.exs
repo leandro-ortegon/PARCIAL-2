@@ -8,7 +8,7 @@ defmodule Busqueda do
   - Fecha: Noviembre 2026
   """
 
-  def rutas(mapa, inicio, bote), do: buscar(mapa, inicio, bote, [inicio], ___)
+  def rutas(mapa, inicio, bote), do: buscar(mapa, inicio, bote, [inicio], 0)
 
   defp buscar(_mapa, bote, bote, camino, costo) do
     [%Ruta{posiciones: camino, costo: costo}]
@@ -22,18 +22,18 @@ defmodule Busqueda do
 
   defp explorar([posicion | resto], mapa, bote, camino, costo) do
     rutas_por_vecino = intentar(Mapa.terreno_en(mapa, posicion), posicion, mapa, bote, camino, costo)
-    rutas_por_vecino ++ explorar(___, mapa, bote, camino, costo)
+    rutas_por_vecino ++ explorar(resto, mapa, bote, camino, costo)
   end
 
-  defp intentar(___, _posicion, _mapa, _bote, _camino, _costo), do: []
+  defp intentar(nil, _posicion, _mapa, _bote, _camino, _costo), do: []
 
-  defp intentar(%Terreno{transitable: ___}, _posicion, _mapa, _bote, _camino, _costo), do: []
+  defp intentar(%Terreno{transitable: false}, _posicion, _mapa, _bote, _camino, _costo), do: []
 
   defp intentar(%Terreno{costo: costo_casilla}, posicion, mapa, bote, camino, costo) do
     if posicion in camino do
       []
     else
-      buscar(mapa, posicion, bote, camino ++ [posicion], costo + ___)
+      buscar(mapa, posicion, bote, camino ++ [posicion], costo + costo_casilla)
     end
   end
 end

@@ -8,7 +8,7 @@
 Problemas resueltos:
 
 1. **Rutas entre ciudades**: todas las rutas entre dos ciudades con recursión, depuración recursiva de conexiones y un Stream infinito de ciudades alcanzables.
-2. **Escapar de la isla**: *(en desarrollo)*.
+2. **Escapar de la isla**: todas las rutas desde la posición inicial hasta el bote con recursión, validación recursiva del mapa y costos tomados de `terrenos.csv` *(integración final en desarrollo)*.
 
 ---
 
@@ -18,7 +18,9 @@ Problemas resueltos:
 PARCIAL-2/
 ├── README.md
 ├── Documentacion/
-│   └── Parcial2_Documentacion.docx   documento del parcial (pruebas, árboles, bitácora de IA)
+│   ├── Parcial2_Documentacion.docx   documento del parcial (pruebas, árboles, bitácora de IA)
+│   └── evidencias/
+│       └── punto2/                   capturas de terminal del punto 2
 ├── Problema1_Rutas/
 │   ├── entradas/
 │   │   ├── conexiones.csv            conexiones ciudad_a,ciudad_b,distancia
@@ -34,14 +36,25 @@ PARCIAL-2/
 │   ├── reporte.exs                   construcción de las líneas de salida
 │   ├── salida.exs                    escritura línea por línea
 │   └── programa.exs                  función main
-└── Problema2_Isla/                   (en desarrollo)
+└── Problema2_Isla/
+    ├── entradas/
+    │   ├── isla.txt                  mapa de la isla (símbolos separados por espacio)
+    │   ├── terrenos.csv              simbolo,nombre,transitable,costo
+    │   └── isla_invalida.txt         mapa con errores para probar la validación
+    ├── terreno.exs                   struct %Terreno{} y Terreno.parse/1
+    ├── ruta.exs                      struct %Ruta{}: movimientos, recorrido y línea CSV
+    ├── lector.exs                    lectura perezosa de terrenos e isla
+    ├── validacion.exs                validación del mapa con recursión propia
+    ├── mapa.exs                      isla como {fila, columna} => %Terreno{} y vecinos
+    ├── busqueda.exs                  búsqueda recursiva con backtracking
+    └── reporte.exs, salida.exs, programa.exs   (pendientes)
 ```
 
 ## Requisitos
 
 - Elixir instalado. Verificar con `elixir --version`.
 
-## Problema 1: Rutas entre ciudades
+## Punto 1 · Rutas entre ciudades
 
 ### Ejecutar
 
@@ -110,10 +123,95 @@ Ruta de menor distancia: Armenia -> Pereira -> Manizales (97 km)
 - Consulta mal formada: se ignora y se informa.
 - Archivo de entrada inexistente: mensaje claro, sin excepción.
 
-## Problema 2: Escapar de la isla
+## Punto 2 · Escapar de la isla
 
-*En desarrollo.*
+### Objetivo
+
+Encontrar, mediante recursión, todas las rutas que permiten a una persona llegar desde su posición inicial `P` hasta el bote `B`, moviéndose solo hacia arriba, abajo, izquierda o derecha y sin repetir posiciones. Para cada ruta se calculan los movimientos y el costo, y se identifican la ruta más corta y la de menor costo. Los símbolos y costos se leen de `terrenos.csv`.
+
+### Estado
+
+| Componente | Estado |
+|---|---|
+| `Terreno`, `Ruta`, `Lector`, `Mapa`, `Busqueda` | Implementados y probados en iex |
+| `Validacion` | Implementada; mapa válido probado, mapa inválido pendiente de evidencia |
+| `Reporte`, `Salida`, `Programa` (`rutas_isla.csv`, `resumen_isla.txt`, `validacion_isla.txt`) | Pendientes |
+
+### Procedimiento realizado
+
+1. **Lectura con Streams** (`lector.exs`): `terrenos.csv` se convierte en un mapa `símbolo => %Terreno{}` e `isla.txt` en una lista de filas. Se ignoran líneas vacías y comentarios.
+2. **Structs** (`terreno.exs`, `ruta.exs`): `transitable` se convierte de `si`/`no` a `true`/`false`; los movimientos de una ruta se calculan como `length(posiciones) - 1`.
+3. **Validación recursiva** (`validacion.exs`): sin `Enum` ni `Stream`, revisa ancho de filas, símbolos definidos, una sola `P` y un solo `B`, y borde de agua; reporta todos los problemas encontrados.
+4. **Representación de la isla** (`mapa.exs`): mapa `{fila, columna} => %Terreno{}`; una posición fuera de la isla devuelve `nil`.
+5. **Búsqueda** (`busqueda.exs`): recursión con backtracking; las posiciones no transitables se descartan con el patrón `%Terreno{transitable: false}` y el costo suma el valor de cada posición a la que se entra (la inicial no suma).
+
+### Probar en iex
+
+Desde la carpeta `Problema2_Isla` (en PowerShell use `iex.bat`):
+
+```bash
+cd Problema2_Isla
+iex -r terreno.exs -r lector.exs -r validacion.exs -r mapa.exs -r ruta.exs -r busqueda.exs
+```
+
+```elixir
+{:ok, terrenos, _} = Lector.leer_terrenos("entradas/terrenos.csv")
+{:ok, filas} = Lector.leer_isla("entradas/isla.txt")
+Validacion.validar(filas, terrenos)
+mapa = Mapa.construir(filas, terrenos)
+rutas = Busqueda.rutas(mapa, Mapa.buscar(mapa, "P"), Mapa.buscar(mapa, "B"))
+Enum.map(rutas, fn r -> Ruta.a_csv(r, 0) end)
+```
+
+### Resultados obtenidos
+
+Con el mapa del enunciado (inicio `{1,1}`, bote `{5,5}`):
+
+| Ruta | Movimientos | Costo |
+|---|---|---|
+| 1 | 10 | 16 |
+| 2 | **8** | 14 |
+| 3 | 10 | **10** |
+| 4 | 12 | 12 |
+
+- Número total de rutas: **4**
+- Ruta más corta: **8 movimientos**
+- Ruta de menor costo: **costo 10 (10 movimientos)**
+
+Coincide con el resumen del enunciado: la ruta más corta no es la de menor costo.
+
+### Evidencias
+
+| # | Evidencia | Archivo |
+|---|---|---|
+| 1 | Pruebas de `Terreno.parse/1` | [01_terreno_parse.png](Documentacion/evidencias/punto2/01_terreno_parse.png) |
+| 2 | Pruebas de `Ruta` | [02_ruta.png](Documentacion/evidencias/punto2/02_ruta.png) |
+| 3 | Lectura de terrenos, isla y archivo inexistente | [03_lector.png](Documentacion/evidencias/punto2/03_lector.png) |
+| 4 | Validación del mapa del enunciado | [04_validacion.png](Documentacion/evidencias/punto2/04_validacion.png) |
+| 5 | Carga de datos para la búsqueda | [05_carga_terrenos_isla.png](Documentacion/evidencias/punto2/05_carga_terrenos_isla.png) |
+| 6 | `Mapa.construir/2` (inicio) | [06_mapa_construir_inicio.png](Documentacion/evidencias/punto2/06_mapa_construir_inicio.png) |
+| 7 | `Mapa.construir/2` (final) | [07_mapa_construir_final.png](Documentacion/evidencias/punto2/07_mapa_construir_final.png) |
+| 8 | Ubicación de `P` y `B` | [08_buscar_inicio_bote.png](Documentacion/evidencias/punto2/08_buscar_inicio_bote.png) |
+| 9 | `Busqueda.rutas/3` | [09_busqueda_rutas.png](Documentacion/evidencias/punto2/09_busqueda_rutas.png) |
+| 10 | Las 4 rutas en formato CSV | [10_rutas_csv.png](Documentacion/evidencias/punto2/10_rutas_csv.png) |
+
+La explicación detallada, las pruebas de escritorio y los árboles de llamadas están en el capítulo 3 de [Parcial2_Documentacion.docx](Documentacion/Parcial2_Documentacion.docx).
+
+## Tecnologías y herramientas
+
+- **Elixir 1.19.5** sobre **Erlang/OTP 28**: `File.stream!`, `Stream`, `Enum`, `Map`, structs, pattern matching, `with` y recursión.
+- **iex** para las pruebas de cada módulo y **elixir** para ejecutar los programas.
+- **Visual Studio Code** y **PowerShell** en Windows.
+- **Git** y **GitHub** para el control de versiones, con un commit por etapa.
+- **Claude** como apoyo de aprendizaje (ver bitácoras de IA).
+
+## Organización de evidencias
+
+| Punto | Dónde están las evidencias |
+|---|---|
+| Punto 1 | Capturas incluidas en el capítulo 2 de [Parcial2_Documentacion.docx](Documentacion/Parcial2_Documentacion.docx) |
+| Punto 2 | Capítulo 3 del documento y carpeta [Documentacion/evidencias/punto2](Documentacion/evidencias/punto2) |
 
 ## Documentación y uso de IA
 
-El documento `Documentacion/Parcial2_Documentacion.docx` contiene la explicación de cada módulo, las pruebas de escritorio, los árboles de llamadas recursivas, las evidencias de ejecución y la bitácora de uso de inteligencia artificial de cada problema. En este trabajo se usó Claude como apoyo; el detalle de cada interacción está registrado en ese documento.
+El documento `Documentacion/Parcial2_Documentacion.docx` contiene la explicación de cada módulo, las pruebas de escritorio, los árboles de llamadas recursivas, las evidencias de ejecución y la bitácora de uso de inteligencia artificial de cada problema (sección 2.11 para el punto 1 y 3.10 para el punto 2). En este trabajo se usó Claude como apoyo; el detalle de cada interacción está registrado en ese documento.
