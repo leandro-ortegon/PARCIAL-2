@@ -19,6 +19,7 @@ PARCIAL-2/
 ├── README.md
 ├── Documentacion/
 │   ├── Parcial2_Documentacion.docx   documento del parcial (pruebas, árboles, bitácora de IA)
+│   ├── Parcial2_Programacion3_CesarOrtegon.pdf   versión PDF para la entrega
 │   └── evidencias/
 │       └── punto2/                   capturas de terminal del punto 2
 ├── Problema1_Rutas/
@@ -261,4 +262,4 @@ La explicación detallada, las pruebas de escritorio y los árboles de llamadas 
 
 ## Documentación y uso de IA
 
-El documento `Documentacion/Parcial2_Documentacion.docx` contiene la explicación de cada módulo, las pruebas de escritorio, los árboles de llamadas recursivas, las evidencias de ejecución y la bitácora de uso de inteligencia artificial de cada problema (sección 2.11 para el punto 1 y 3.10 para el punto 2). En este trabajo se usó Claude como apoyo; el detalle de cada interacción está registrado en ese documento.
+El documento `Documentacion/Parcial2_Documentacion.docx` (y su versión [PDF](Documentacion/Parcial2_Programacion3_CesarOrtegon.pdf)) contiene la explicación de cada módulo, las pruebas de escritorio, los árboles de llamadas recursivas, las evidencias de ejecución y la bitácora de uso de inteligencia artificial de cada problema (sección 2.11 para el punto 1 y 3.10 para el punto 2). En este trabajo se usó Claude como apoyo; el detalle de cada interacción está registrado en ese documento.
