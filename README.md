@@ -240,6 +240,7 @@ Hay 2 posiciones iniciales P: {1,1} y {4,3}
 | 10 | Las 4 rutas en formato CSV | [10_rutas_csv.png](Documentacion/evidencias/punto2/10_rutas_csv.png) |
 | 11 | Programa con mapa inválido y archivo inexistente | [11_programa_invalida_y_no_existe.png](Documentacion/evidencias/punto2/11_programa_invalida_y_no_existe.png) |
 | 12 | Programa completo con el mapa del enunciado | [12_programa_mapa_enunciado.png](Documentacion/evidencias/punto2/12_programa_mapa_enunciado.png) |
+| 13 | Carpeta `salidas/` con los 3 archivos generados | [13_carpeta_salidas.png](Documentacion/evidencias/punto2/13_carpeta_salidas.png) |
 
 La explicación detallada, las pruebas de escritorio y los árboles de llamadas están en el capítulo 3 de [Parcial2_Documentacion.docx](Documentacion/Parcial2_Documentacion.docx).
 
