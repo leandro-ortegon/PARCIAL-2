@@ -8,7 +8,7 @@
 Problemas resueltos:
 
 1. **Rutas entre ciudades**: todas las rutas entre dos ciudades con recursión, depuración recursiva de conexiones y un Stream infinito de ciudades alcanzables.
-2. **Escapar de la isla**: todas las rutas desde la posición inicial hasta el bote con recursión, validación recursiva del mapa y costos tomados de `terrenos.csv` *(integración final en desarrollo)*.
+2. **Escapar de la isla**: todas las rutas desde la posición inicial hasta el bote con recursión, validación recursiva del mapa y costos tomados de `terrenos.csv`.
 
 ---
 
@@ -47,7 +47,10 @@ PARCIAL-2/
     ├── validacion.exs                validación del mapa con recursión propia
     ├── mapa.exs                      isla como {fila, columna} => %Terreno{} y vecinos
     ├── busqueda.exs                  búsqueda recursiva con backtracking
-    └── reporte.exs, salida.exs, programa.exs   (pendientes)
+    ├── reporte.exs                   líneas de pantalla, CSV y resumen con mapa marcado
+    ├── salida.exs                    escritura línea por línea
+    ├── programa.exs                  función main (acepta el nombre del mapa como argumento)
+    └── salidas/                      la crea el programa en cada ejecución
 ```
 
 ## Requisitos
@@ -131,11 +134,7 @@ Encontrar, mediante recursión, todas las rutas que permiten a una persona llega
 
 ### Estado
 
-| Componente | Estado |
-|---|---|
-| `Terreno`, `Ruta`, `Lector`, `Mapa`, `Busqueda` | Implementados y probados en iex |
-| `Validacion` | Implementada; mapa válido probado, mapa inválido pendiente de evidencia |
-| `Reporte`, `Salida`, `Programa` (`rutas_isla.csv`, `resumen_isla.txt`, `validacion_isla.txt`) | Pendientes |
+Completo: todos los módulos están implementados y el programa se probó con el mapa del enunciado, con un mapa inválido y con un archivo inexistente.
 
 ### Procedimiento realizado
 
@@ -144,6 +143,30 @@ Encontrar, mediante recursión, todas las rutas que permiten a una persona llega
 3. **Validación recursiva** (`validacion.exs`): sin `Enum` ni `Stream`, revisa ancho de filas, símbolos definidos, una sola `P` y un solo `B`, y borde de agua; reporta todos los problemas encontrados.
 4. **Representación de la isla** (`mapa.exs`): mapa `{fila, columna} => %Terreno{}`; una posición fuera de la isla devuelve `nil`.
 5. **Búsqueda** (`busqueda.exs`): recursión con backtracking; las posiciones no transitables se descartan con el patrón `%Terreno{transitable: false}` y el costo suma el valor de cada posición a la que se entra (la inicial no suma).
+6. **Reporte y salida** (`reporte.exs`, `salida.exs`, `programa.exs`): si el mapa es inválido se escribe `validacion_isla.txt` y no se buscan rutas; si es válido se generan `rutas_isla.csv` y `resumen_isla.txt`, con el mapa y la ruta de menor costo marcada con `*`.
+
+### Ejecutar
+
+Desde la carpeta `Problema2_Isla`:
+
+```bash
+cd Problema2_Isla
+elixir -r terreno.exs -r lector.exs -r validacion.exs -r mapa.exs -r ruta.exs -r busqueda.exs -r reporte.exs -r salida.exs programa.exs
+```
+
+El nombre del mapa es opcional (por defecto `isla.txt`). Para probar la validación:
+
+```bash
+elixir -r terreno.exs -r lector.exs -r validacion.exs -r mapa.exs -r ruta.exs -r busqueda.exs -r reporte.exs -r salida.exs programa.exs isla_invalida.txt
+```
+
+### Archivos de salida (`salidas/`)
+
+| Archivo | Contenido |
+|---|---|
+| `rutas_isla.csv` | Una línea por ruta: `ruta;movimientos;costo;recorrido` |
+| `resumen_isla.txt` | Total de rutas, ruta más corta, ruta de menor costo y el mapa con esa ruta marcada con `*` |
+| `validacion_isla.txt` | Problemas del mapa, o "El mapa es válido" |
 
 ### Probar en iex
 
@@ -180,6 +203,27 @@ Con el mapa del enunciado (inicio `{1,1}`, bote `{5,5}`):
 
 Coincide con el resumen del enunciado: la ruta más corta no es la de menor costo.
 
+Mapa de `resumen_isla.txt` con la ruta de menor costo:
+
+```
+~ ~ ~ ~ ~ ~ ~
+~ P * * * * ~
+~ R T T T * ~
+~ D C T * * ~
+~ R T C * T ~
+~ C D C * B ~
+~ ~ ~ ~ ~ ~ ~
+```
+
+Con `isla_invalida.txt`, `validacion_isla.txt` reporta los 4 problemas incluidos a propósito y no se buscan rutas:
+
+```
+Fila 3: tiene 6 posiciones; se esperaban 7
+Posición {0,4}: el borde debe ser agua y contiene C
+Posición {2,2}: el símbolo X no está en terrenos.csv
+Hay 2 posiciones iniciales P: {1,1} y {4,3}
+```
+
 ### Evidencias
 
 | # | Evidencia | Archivo |
@@ -194,6 +238,7 @@ Coincide con el resumen del enunciado: la ruta más corta no es la de menor cost
 | 8 | Ubicación de `P` y `B` | [08_buscar_inicio_bote.png](Documentacion/evidencias/punto2/08_buscar_inicio_bote.png) |
 | 9 | `Busqueda.rutas/3` | [09_busqueda_rutas.png](Documentacion/evidencias/punto2/09_busqueda_rutas.png) |
 | 10 | Las 4 rutas en formato CSV | [10_rutas_csv.png](Documentacion/evidencias/punto2/10_rutas_csv.png) |
+| 11 | Programa con mapa inválido y archivo inexistente | [11_programa_invalida_y_no_existe.png](Documentacion/evidencias/punto2/11_programa_invalida_y_no_existe.png) |
 
 La explicación detallada, las pruebas de escritorio y los árboles de llamadas están en el capítulo 3 de [Parcial2_Documentacion.docx](Documentacion/Parcial2_Documentacion.docx).
 
